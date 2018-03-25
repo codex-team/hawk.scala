@@ -34,10 +34,10 @@ You can catch exceptions by yourself without enabling handlers.
 
 ```scala
 try {
-    throw new Exception("Major error")
-  } catch {
-    case e: Exception => new HawkCatcher("<token>").catchException(e)
-  }
+  throw new Exception("Major error")
+} catch {
+  case e: Exception => new HawkCatcher("<token>").catchException(e)
+}
 ```
 
 ## Links

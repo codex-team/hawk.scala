@@ -1,16 +1,18 @@
 package codex.hawk
 
 import java.io._
-import scalaj.http._
+
+import spray.json.DefaultJsonProtocol._
 import spray.json._
-import DefaultJsonProtocol._
+
+import scalaj.http._
 
 case class customException(smth: String) extends Exception(smth)
 
 /**
   * Hawk Catcher for Scala
   */
-class HawkCatcher (val token: String, val apiUrl: String = "https://hawk.so/catcher/scala") {
+class HawkCatcher(val token: String, val apiUrl: String = "https://hawk.so/catcher/scala") {
 
   /**
     * Convert Stack Trace object to String
@@ -39,7 +41,7 @@ class HawkCatcher (val token: String, val apiUrl: String = "https://hawk.so/catc
   /**
     * Prepare error data for sending and send the to the Hawk Catcher API
     *
-    * @param e – Exception object
+    * @param e       – Exception object
     * @param comment – custom string comment
     */
   def catchException(e: Exception, comment: String = ""): Either[String, Exception] = {
@@ -59,14 +61,14 @@ class HawkCatcher (val token: String, val apiUrl: String = "https://hawk.so/catc
     */
   def send(stack: Seq[Map[String, String]], errorMessage: String, comment: String): Either[String, Exception] = {
     try {
-        val data = Map(
-          "tag" -> "fatal",
-          "message" -> errorMessage,
-          "stack" -> stack.toJson.toString,
-          "time" -> getCurrentTime(),
-          "token" -> token,
-          "comment" -> comment
-        )
+      val data = Map(
+        "tag" -> "fatal",
+        "message" -> errorMessage,
+        "stack" -> stack.toJson.toString,
+        "time" -> getCurrentTime(),
+        "token" -> token,
+        "comment" -> comment
+      )
       val response: HttpResponse[String] = Http(apiUrl).postData(data.toJson.toString).header("content-type", "application/json").asString
       Left(response.body.toString)
     } catch {
